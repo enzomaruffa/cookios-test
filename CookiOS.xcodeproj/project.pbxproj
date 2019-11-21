@@ -15,6 +15,8 @@
 		47F18CAA2385602F00441754 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 47F18CA82385602F00441754 /* Main.storyboard */; };
 		47F18CAC2385603300441754 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47F18CAB2385603300441754 /* Assets.xcassets */; };
 		47F18CAF2385603300441754 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 47F18CAD2385603300441754 /* LaunchScreen.storyboard */; };
+		FB26FE152386DCA0004E782E /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB26FE142386DCA0004E782E /* GameKit.framework */; };
+		FBEE503A238563D80020CB62 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEE5039238563D80020CB62 /* MenuViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +30,8 @@
 		47F18CAB2385603300441754 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		47F18CAE2385603300441754 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		47F18CB02385603300441754 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FB26FE142386DCA0004E782E /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
+		FBEE5039238563D80020CB62 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB26FE152386DCA0004E782E /* GameKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +51,7 @@
 			children = (
 				47F18C9D2385602F00441754 /* CookiOS */,
 				47F18C9C2385602F00441754 /* Products */,
+				FB26FE132386DCA0004E782E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -69,8 +75,17 @@
 				47F18CAB2385603300441754 /* Assets.xcassets */,
 				47F18CAD2385603300441754 /* LaunchScreen.storyboard */,
 				47F18CB02385603300441754 /* Info.plist */,
+				FBEE5039238563D80020CB62 /* MenuViewController.swift */,
 			);
 			path = CookiOS;
+			sourceTree = "<group>";
+		};
+		FB26FE132386DCA0004E782E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FB26FE142386DCA0004E782E /* GameKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,6 +164,7 @@
 				47F18CA52385602F00441754 /* GameScene.swift in Sources */,
 				47F18CA72385602F00441754 /* GameViewController.swift in Sources */,
 				47F18C9F2385602F00441754 /* AppDelegate.swift in Sources */,
+				FBEE503A238563D80020CB62 /* MenuViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,8 +309,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D9FBK2WPJX;
+				DEVELOPMENT_TEAM = F6XL2RL8RU;
 				INFOPLIST_FILE = CookiOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -311,8 +328,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D9FBK2WPJX;
+				DEVELOPMENT_TEAM = F6XL2RL8RU;
 				INFOPLIST_FILE = CookiOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
