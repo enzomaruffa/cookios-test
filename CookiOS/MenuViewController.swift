@@ -14,13 +14,23 @@ class MenuViewController: UIViewController {
 
     @IBAction func join(_ sender: Any) {
         print("Join pressed")
-        authenticatePlayer()
+       
+        if GKLocalPlayer.local.isAuthenticated {
+            authenticatePlayer()
+        } else {
+            createSession()
+        }
     }
     
     @IBAction func host(_ sender: Any) {
         print("Host pressed")
         hosting = true
-        authenticatePlayer()
+        
+        if GKLocalPlayer.local.isAuthenticated {
+            authenticatePlayer()
+        } else {
+            createSession()
+        }
     }
     
     func authenticatePlayer() {
