@@ -1,36 +1,30 @@
 import UIKit
 import GameKit
 
-class MenuViewController: UIViewController {
+class MenuViewController: UIViewController, GKLocalPlayerListener {
 
+    
+    @IBOutlet weak var hostButton: UIButton!
+    @IBOutlet weak var joinButton: UIButton!
     
     var hosting = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        authenticatePlayer()
         // Do any additional setup after loading the view.
-    }
-
-    @IBAction func join(_ sender: Any) {
-        print("Join pressed")
-       
-        if GKLocalPlayer.local.isAuthenticated {
-            authenticatePlayer()
-        } else {
-            createSession()
-        }
     }
     
     @IBAction func host(_ sender: Any) {
         print("Host pressed")
         hosting = true
-        
-        if GKLocalPlayer.local.isAuthenticated {
-            authenticatePlayer()
-        } else {
-            createSession()
-        }
+        createSession()
+    }
+    
+    @IBAction func join(_ sender: Any) {
+        print("Join pressed")
+        createSession()
     }
     
     func authenticatePlayer() {
@@ -51,7 +45,9 @@ class MenuViewController: UIViewController {
         {
             // Forçar a view ir pra uma VC de menu
             print("OI")
-            createSession()
+            hostButton.isEnabled = true
+            joinButton.isEnabled = true
+            
         }
         else
         {
@@ -61,6 +57,15 @@ class MenuViewController: UIViewController {
     }
     
     func createSession() {
+        
+        let localPlayer = GKLocalPlayer.local
+        localPlayer.unregisterAllListeners()
+        localPlayer.register(self)
+        
+        localPlayer.loadChallengableFriends { (players, error) in
+            print("Load Challengable Friends \(players), \(error)")
+        }
+        
         if hosting {
             GKMatchmaker.shared().startBrowsingForNearbyPlayers { (player: GKPlayer, reachable) in
                 // Player é o jogador vizinho.
@@ -76,6 +81,14 @@ class MenuViewController: UIViewController {
                 print(player)
             }
         }
+    }
+    
+    func player(_ player: GKPlayer, didAccept invite: GKInvite) {
+        
+    }
+    
+    func player(_ player: GKPlayer, didRequestMatchWithRecipients recipientPlayers: [GKPlayer]) {
+        
     }
     
 }
