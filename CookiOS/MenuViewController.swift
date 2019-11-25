@@ -1,94 +1,108 @@
 import UIKit
-import GameKit
+import MultipeerConnectivity
 
-class MenuViewController: UIViewController, GKLocalPlayerListener {
-
+class MenuViewController: UIViewController, MCSessionDelegate, MCBrowserViewControllerDelegate {
     
-    @IBOutlet weak var hostButton: UIButton!
-    @IBOutlet weak var joinButton: UIButton!
+    var peerID: MCPeerID!
+    var mcSession: MCSession!
+    var mcAdvertiserAssistant: MCAdvertiserAssistant!
+    var messageToSend: String!
     
     var hosting = false
     
+    @IBOutlet weak var chatView: UITextView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        authenticatePlayer()
         // Do any additional setup after loading the view.
+        // 1
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(showConnectionMenu))
+
+        // 2
+        peerID = MCPeerID(displayName: UIDevice.current.name)
+        mcSession = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .required)
+        mcSession.delegate = self
     }
     
-    @IBAction func host(_ sender: Any) {
-        print("Host pressed")
-        hosting = true
-        createSession()
+    @objc func showConnectionMenu() {
+      let ac = UIAlertController(title: "Connection Menu", message: nil, preferredStyle: .actionSheet)
+      ac.addAction(UIAlertAction(title: "Host a session", style: .default, handler: hostSession))
+      ac.addAction(UIAlertAction(title: "Join a session", style: .default, handler: joinSession))
+      ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+      present(ac, animated: true)
     }
     
-    @IBAction func join(_ sender: Any) {
-        print("Join pressed")
-        createSession()
+    // 1
+    func hostSession(action: UIAlertAction) {
+      mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "ioscreator-chat", discoveryInfo: nil, session: mcSession)
+      mcAdvertiserAssistant.start()
+    }
+
+    // 2
+    func joinSession(action: UIAlertAction) {
+      let mcBrowser = MCBrowserViewController(serviceType: "ioscreator-chat", session: mcSession)
+      mcBrowser.delegate = self
+      present(mcBrowser, animated: true)
     }
     
-    func authenticatePlayer() {
-        // Aparecer alguma view de aguarde
-        // Desativar os botões
-        GKLocalPlayer.local.authenticateHandler = handler
+    @IBAction func tapSendButton(_ sender: Any) {
+    // 1
+    messageToSend = "\(peerID.displayName): lul\n"
+      let message = messageToSend.data(using: String.Encoding.utf8, allowLossyConversion: false)
+      
+      do {
+        // 2
+        try self.mcSession.send(message!, toPeers: self.mcSession.connectedPeers, with: .unreliable)
+        chatView.text = chatView.text + messageToSend
+      }
+      catch {
+        print("Error sending message")
+      }
     }
     
-    func handler(vc: UIViewController?, error: Error?) -> Void {
-        print("Handler return:")
-        if vc != nil
-        {
-            // Ainda não sei direito o que acontece
-            print("VC is not nil!")
-            self.present(vc!, animated: true, completion: nil)
-        }
-        else if GKLocalPlayer.local.isAuthenticated
-        {
-            // Forçar a view ir pra uma VC de menu
-            print("OI")
-            hostButton.isEnabled = true
-            joinButton.isEnabled = true
-            
-        }
-        else
-        {
-            // Forçar a view ir pra uma VC de unheeee vc nao tem gamecenter chore
-            print("fodeu")
-        }
+    // 1
+    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+      switch state {
+      case .connected:
+        print("Connected: \(peerID.displayName)")
+      case .connecting:
+        print("Connecting: \(peerID.displayName)")
+      case .notConnected:
+        print("Not Connected: \(peerID.displayName)")
+      @unknown default:
+        print("fatal error")
+      }
     }
-    
-    func createSession() {
-        
-        let localPlayer = GKLocalPlayer.local
-        localPlayer.unregisterAllListeners()
-        localPlayer.register(self)
-        
-        localPlayer.loadChallengableFriends { (players, error) in
-            print("Load Challengable Friends \(players), \(error)")
-        }
-        
-        if hosting {
-            GKMatchmaker.shared().startBrowsingForNearbyPlayers { (player: GKPlayer, reachable) in
-                // Player é o jogador vizinho.
-                // reachable = true -> jogador novo apareceu
-                // reachable = false -> jogador antigo sumiu
-                print(player)
-            }
-        } else {
-            GKMatchmaker.shared().startBrowsingForNearbyPlayers { (player: GKPlayer, reachable) in
-                // Player é o jogador vizinho.
-                // reachable = true -> jogador novo apareceu
-                // reachable = false -> jogador antigo sumiu
-                print(player)
-            }
-        }
+
+    // 2
+    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+      DispatchQueue.main.async { [unowned self] in
+        // send chat message
+        let message = NSString(data: data as Data, encoding: String.Encoding.utf8.rawValue)! as String
+        self.chatView.text = self.chatView.text + message
+      }
     }
-    
-    func player(_ player: GKPlayer, didAccept invite: GKInvite) {
-        
+
+    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
+
     }
-    
-    func player(_ player: GKPlayer, didRequestMatchWithRecipients recipientPlayers: [GKPlayer]) {
-        
+
+    func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
+
     }
+
+    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
+
+    }
+
+    // 3
+    func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
+      dismiss(animated: true)
+    }
+
+    func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
+      dismiss(animated: true)
+    }
+   
     
 }
